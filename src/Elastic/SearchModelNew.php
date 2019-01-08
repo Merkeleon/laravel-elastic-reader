@@ -43,6 +43,8 @@ class SearchModelNew
             $builderParameters
         );
 
+        logger()->info('Merkeleon\ElasticReader\Elastic\SearchModelNew::search with params', $parameters);
+        
         $elasticResponse = $elastic->search($parameters);
 
         return SearchCollection::createFromElasticResponse($elasticResponse, $this->hitCallback, $callbacks);
