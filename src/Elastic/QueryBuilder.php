@@ -3,12 +3,20 @@
 
 namespace Merkeleon\ElasticReader\Elastic;
 
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 class QueryBuilder
 {
     protected $query = [];
     protected $defaultSorting = [];
+
+    const EQUAL_SIGNS = [
+        '>'  => 'gt',
+        '>=' => 'gte',
+        '<'  => 'lt',
+        '<=' => 'lte',
+    ];
 
     public function setDefaultSorting(array $defaultSorting)
     {
@@ -200,5 +208,41 @@ class QueryBuilder
         }
 
         return $str;
+    }
+
+    public function when($value, $callback, $default = null)
+    {
+        if ($value)
+        {
+            return $callback($this, $value) ?: $this;
+        }
+        elseif ($default)
+        {
+            return $default($this, $value) ?: $this;
+        }
+
+        return $this;
+    }
+
+    public function whereDate(string $field, string $sign, string $value)
+    {
+        if ($equalSign = Arr::get(self::EQUAL_SIGNS, $sign))
+        {
+            $query['range'][$field][$equalSign] = $this->prepareDate($value);
+
+            $this->merge($query);
+        }
+
+        return $this;
+    }
+
+    public function prepareDate($value, $format = 'Y-m-d H:i:s')
+    {
+        if (!$value)
+        {
+            return null;
+        }
+
+        return (new Carbon($value, config('view.timezone')))->timezone(config('app.timezone'))->format($format);
     }
 }
