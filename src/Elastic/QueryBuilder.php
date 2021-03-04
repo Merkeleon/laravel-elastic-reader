@@ -36,6 +36,13 @@ class QueryBuilder
         return $this;
     }
 
+    public function setTrackTotalHits()
+    {
+        $this->query['track_total_hits'] = true;
+
+        return $this;
+    }
+
     public function searchAfter($searchAfter)
     {
         if ($searchAfter)
@@ -107,6 +114,11 @@ class QueryBuilder
         if ($searchAfter = Arr::get($this->query, 'search_after'))
         {
             $build['search_after'] = $searchAfter;
+        }
+
+        if (Arr::get($this->query, 'track_total_hits'))
+        {
+            $build['track_total_hits'] = true;
         }
 
         return $build;

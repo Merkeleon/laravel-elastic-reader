@@ -97,6 +97,7 @@ class SearchModelNew
     public function getTotal()
     {
         $this->query()
+             ->setTrackTotalHits()
              ->size(1);
 
         return $this->get()
