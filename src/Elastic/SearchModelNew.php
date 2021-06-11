@@ -154,6 +154,11 @@ class SearchModelNew
         return true;
     }
 
+    public function chunk($count, callable $callback)
+    {
+        return $this->chunkById($count, $callback);
+    }
+
     public function firstOrFail()
     {
         if ($first = $this->first())
